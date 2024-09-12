@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Wallet {
+  id        Int     @id @default(autoincrement())
+  travel    Travel? // Ссылка на модель Travel
+  eat       Eat?    // Ссылка на модель Eat
+  cash      Cash?   // Ссылка на модель Cash
+  bank      Bank?   // Ссылка на модель Bank
+}
+
+model Travel {
+  id        Int     @id @default(autoincrement())
+  money     Int     // Сумма денег на проезд
+  rate      Int     @default(160)
+  wallet    Wallet  @relation(fields: [walletId], references: [id])
+  walletId  Int    @unique
+}
+
+model Eat {
+  id        Int     @id @default(autoincrement())
+  money     Int     // Сумма денег на еду
+  rate      Int     @default(2000)
+  wallet    Wallet  @relation(fields: [walletId], references: [id])
+  walletId  Int     @unique
+}
+
+model Cash {
+  id        Int     @id @default(autoincrement())
+  money     Int     // Личные деньги
+  rate      Int     @default(800)
+  wallet    Wallet  @relation(fields: [walletId], references: [id])
+  walletId  Int     @unique
+}
+
+model Bank {
+  id        Int     @id @default(autoincrement())
+  money     Int     // Деньги в копилке
+  wallet    Wallet  @relation(fields: [walletId], references: [id])
+  walletId  Int     @unique
+}
